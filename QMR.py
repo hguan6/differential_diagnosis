@@ -126,7 +126,8 @@ class QMR(Env):
 
         if self.mask_actions:
             self._update_obs()
-        return self.obs_dict
+            return self.obs_dict
+        return self.obs
 
     def step(self, action):
         # Inquire action
@@ -174,7 +175,8 @@ class QMR(Env):
 
         if self.mask_actions:
             self._update_obs()
-        return self.obs_dict, reward, done, {}
+            return self.obs_dict, reward, done, {}
+        return self.obs, reward, done, {}
 
     def set_seed(self, seed=None):
         if seed == None:

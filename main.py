@@ -32,13 +32,14 @@ def parse_arguments():
     parser.add_argument('--algorithm', type=str, default='PPO')
     parser.add_argument('--training_iteration', type=int, default=5000)
     parser.add_argument('--lr', type=float, default=1e-5)
+    parser.add_argument('--local_dir', type=str, default='~/ray_results')
     parser.add_argument('--eval', action='store_true')
     parser.add_argument('--checkpoint_path', type=str)
     # parser.add_argument('--resume', action='store_true')
 
     # Bayesian experimental design arguments
     parser.add_argument('--utility_func', type=str, default='KL',
-                        help="Chose from (`SI` and `KL`), case insensitive.")
+                        help="Choose from (`SI` and `KL`), case insensitive.")
     parser.add_argument('--threshold', type=float, default='0.05')
     parser.add_argument('--param_search', action='store_true')
 

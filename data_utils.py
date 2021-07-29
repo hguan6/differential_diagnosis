@@ -68,8 +68,10 @@ def load_dialogue_data(args):
         disease2finding = defaultdict(list)
         finding2disease = defaultdict(set)
 
+        disease_case_counts = defaultdict(int)
         for case in data:
             disease = case['disease_tag']
+            disease_case_counts[disease] += 1
             for symp, b in case['goal']['implicit_inform_slots'].items():
                 if b:
                     disease2finding[disease].append(symp)
@@ -80,8 +82,7 @@ def load_dialogue_data(args):
                     finding2disease[symp].add(disease)
 
         for d, fs in disease2finding.items():
-            f_len = len(fs)
-            disease2finding[d] = {f: round(count / f_len, 4)
+            disease2finding[d] = {f: round(count / disease_case_counts[d], 4)
                                   for f, count in Counter(fs).items()}
 
         return finding2disease, disease2finding

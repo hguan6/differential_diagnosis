@@ -91,7 +91,7 @@ class BED:
             n_correct = [i + j for i, j in zip(n_correct, correctness)]
             total_steps += step + 1
         accuracy = [i / test_size for i in n_correct]
-        print(
+        logger.info(
             f'max_episode_len: {self.max_episode_len}, threshold: {self.threshold}\n#experiments: {test_size}; accuracy: {accuracy}; average steps: {total_steps/test_size:.4f}')
 
 

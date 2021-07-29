@@ -27,6 +27,7 @@ class RLAgent:
         ray.init()
         self.args = args
         self.algo = args.algorithm
+        self.fcnet_hiddens = [2048, 2048, 1024]
         if self.algo == "AlphaZero":
             assert args.mask_actions
             self.algo = "contrib/AlphaZero"
@@ -47,11 +48,11 @@ class RLAgent:
         config = {
             "env": env_class,
             "env_config": {"args": self.args},
-            "lr": grid_search([1e-7, 1e-6]),
-            # "lr": 1e-7,
+            # "lr": grid_search([1e-7, 1e-6]),
+            "lr": 1e-6,
             "gamma": self.args.gamma,
             "model": {
-                "fcnet_hiddens": [2048, 1024],
+                "fcnet_hiddens": self.fcnet_hiddens,
                 "fcnet_activation": "relu",
             },
             "num_workers": os.cpu_count() - 1,
@@ -68,6 +69,7 @@ class RLAgent:
             stop={"training_iteration": self.args.training_iteration},
             config=config,
             checkpoint_at_end=True,
+            local_dir=self.args.local_dir,
             # resume=args.resume
         )
 
@@ -79,7 +81,7 @@ class RLAgent:
         config["model"] = {
             "custom_model": "dense_model",
             "vf_share_layers": True,
-            "fcnet_hiddens": [2048, 1024],
+            "fcnet_hiddens": self.fcnet_hiddens,
             "fcnet_activation": "relu",
         }
         agent = ppo.PPOTrainer(config=config, env=QMR)
@@ -188,12 +190,11 @@ class ActorCriticModel(TorchModelV2, nn.Module, ABC):
         return self._value_out
 
     def compute_priors_and_value(self, obs):
-        obs = torch.as_tensor(
-            [self.preprocessor.transform(obs)], dtype=torch.float32)
-        input_dict = restore_original_dimensions(obs, self.obs_space, "torch")
+        # obs = torch.as_tensor(
+        #     [self.preprocessor.transform(obs)], dtype=torch.float32)
+        # input_dict = restore_original_dimensions(obs, self.obs_space, "torch")
 
-        # obs = {key: torch.as_tensor(value, dtype=torch.float32)
-        #        for key, value in obs.items()}
+        input_dict = {"obs": torch.as_tensor(obs["obs"], dtype=torch.float32)}
         with torch.no_grad():
             model_out = self.forward(input_dict, None, [1])
             logits, _ = model_out
