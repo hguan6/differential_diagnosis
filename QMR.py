@@ -63,6 +63,8 @@ class QMR:
                 f for f, b in case['goal']['implicit_inform_slots'].items() if b)
 
             # Get pos_findings and neg_findings
+            self.pos_findings = []
+            self.neg_findings = []
             for f, b in case['goal']['explicit_inform_slots'].items():
                 if b:
                     self.pos_findings.append(f)
